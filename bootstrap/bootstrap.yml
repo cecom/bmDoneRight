@@ -1,0 +1,228 @@
+---
+- hosts: all
+  tasks:
+  
+  
+  #Add Repo for Libs
+  - name: Install EPEL Release
+    become: true
+    yum:
+      name: epel-release
+      state: latest
+   
+  #X11 forwarding
+  - name: Install x11-auth
+    become: true
+    yum:
+      name:  xorg-x11-xauth
+      state: latest
+      
+  - name: Install x11-apps
+    become: true
+    yum:
+      name:  xorg-x11-apps.x86_64
+      state: latest
+  
+  #Not all locale in the base box
+  - name: Reinstall glibc-common for missing locale
+    become: true
+    command: yum -y reinstall glibc-common
+  
+  #install some packages for the gui's we use for gedit, p4merge, eclipse
+  - name: Install GUI packages
+    become: true
+    yum:
+      name:  
+        - dbus
+        - dbus-x11
+        - PackageKit-gtk3-module
+        - libcanberra-gtk3
+        - xkeyboard-config
+        - gnu-free-mono-fonts
+        - fontconfig
+        - gnu-free-fonts-common
+        - gnu-free-sans-fonts
+        - google-crosextra-caladea-fonts
+        - fontpackages-filesystem
+        - gnu-free-serif-fonts
+        - open-sans-fonts
+        - mesa-dri-drivers
+      state: latest
+  
+  #gedit 
+  - name: Install gedit
+    become: true
+    yum:
+      name:  gedit
+      state: latest
+      
+  #notepadqq 
+  - name: Add repository for notepadqq
+    yum_repository:
+      name: sea-devel
+      description: repo for notepadqq
+      baseurl: https://sea.fedorapeople.org/repo/
+  
+  - name: Install notepadqq
+    become: true
+    yum:
+      name:  notepadqq
+      state: latest   
+      disable_gpg_check: true
+
+  #Git
+  - name: Install Git
+    include_role: 
+      name: git
+  
+  #JDK8
+  - name: Install JDK8
+    become: true
+    yum:
+      name:  java-1.8.0-openjdk-devel.x86_64
+      state: latest
+
+  - name: Install JDK8 Source
+    become: true
+    yum:
+      name: java-1.8.0-openjdk-src.x86_64 
+      state: latest
+
+  #Maven
+  - name: Install Maven
+    include_role: 
+      name: maven
+  
+  #Jenkins and Gerrit Requirements    
+  - name: Install Requirements for jenkins and gerrit
+    command: ansible-galaxy install -r requirements.yml -f
+    register: external_roles_result
+    changed_when: "not external_roles_result.stdout|search('already installed')"
+
+  #Jenkins
+  - name: Install Jenkins
+    become: true
+    vars:
+      jenkins_http_port: 8070
+      jenkins_repo_url: http://pkg.jenkins-ci.org/redhat-stable/jenkins.repo
+      jenkins_repo_key_url: http://pkg.jenkins-ci.org/redhat-stable/jenkins-ci.org.key
+    include_role: 
+      role: ansible-role-jenkins
+
+  #Gerrit
+  - name: Install Gerrit
+    become: true
+    vars:
+      gerrit_version: 2.14.6
+      gerrit_sha256sum: 1809c5564d698b9e32fead51cc179a1550a837b835c4b05e5f962c6fb5e3583b
+      gerrit_httpd_listen_url: 'http://*:8090/'
+      gerrit_canonical_web_url: 'http://localhost:8090/'
+      gerrit_container_java_home: /usr/lib/jvm/java-1.8.0-openjdk-1.8.0.161-0.b14.el7_4.x86_64/jre/
+    include_role:
+      role: ansible-gerrit
+  
+  #MySql
+  - name: Install Mysql
+    become: true
+    vars:
+      mysql_users:
+      - name: schulung
+        host: "%"
+        password: schulung
+    include_role:
+      role: ansible-role-mysql
+  
+  #P4Merge
+  - name: Create P4Merge Folder
+    file:
+      path: /opt/p4merge
+      state: directory
+      mode: 0755
+
+  - name: Download P4Merge
+    unarchive:
+      src: http://cdist2.perforce.com/perforce/r17.3/bin.linux26x86_64/p4v.tgz
+      dest: /opt/p4merge
+      remote_src: yes
+      creates: /opt/p4merge/p4v-2017.3.1601999/bin/p4merge
+      
+  - file:
+      src: /opt/p4merge/p4v-2017.3.1601999/bin/p4merge
+      dest: /usr/local/bin/p4merge
+      state: link
+  
+  #Liquibase
+  - name: Create Liquibase Folder
+    file:
+      path: /opt/liquibase
+      state: directory
+      mode: 0755
+
+  - name: Download Liquibase
+    unarchive:
+      src: https://github.com/liquibase/liquibase/releases/download/liquibase-parent-3.5.3/liquibase-3.5.3-bin.tar.gz
+      dest: /opt/liquibase
+      remote_src: yes
+      creates: /opt/liquibase/liquibase.jar
+      
+  #PACIFy
+  - name: Create PACIFy Folder
+    file:
+      path: /opt/pacify
+      state: directory
+      mode: 0755
+      
+  - name: Download PACIFy
+    get_url:
+      url: https://github.com/cecom/PACIFy/releases/download/v1.4.1/pacify-shaded-1.4.1.jar
+      dest: /opt/pacify/pacify-shaded-1.4.1.jar
+      mode: 0755 
+
+  #Eclipse
+  #- name: Download Eclipse
+  #  get_url:
+  #    url: http://ftp.fau.de/eclipse/technology/epp/downloads/release/oxygen/2/eclipse-jee-oxygen-2-linux-gtk-x86_64.tar.gz
+  #    dest: /opt
+  #    timeout: 1
+  #    mode: 0755 
+      
+  - name: Untar Eclipse
+    unarchive:
+      src: /vagrant/downloads/eclipse-jee-oxygen-2-linux-gtk-x86_64.tar.gz
+      dest: /opt
+      creates: /opt/eclipse/eclipse
+
+  - name: Link Eclipse
+    file:
+      src: /opt/eclipse/eclipse
+      dest: /usr/local/bin/eclipse
+      state: link
+
+  #MariaDbDriver for Eclipse
+  - name: Create MariaDB Driver Folder
+    file:
+      path: /opt/mariaDb
+      state: directory
+      mode: 0755
+      
+  - name: Download MariaDB Driver Connector
+    get_url:
+      url: https://downloads.mariadb.com/enterprise/152y-977s/connectors/java/connector-java-2.2.1/mariadb-java-client-2.2.1.jar
+      dest: /opt/mariaDb/mariadb-java-client-2.2.1.jar
+      mode: 0755 
+      
+  #Derby
+  - name: Download Derby
+    unarchive:
+      src: http://ftp.fau.de/apache/db/derby/db-derby-10.14.1.0/db-derby-10.14.1.0-bin.tar.gz
+      dest: /opt
+      remote_src: yes
+      creates: /opt/db-derby-10.14.1.0-bin/LICENSE
+  
+  
+
+
+      
+      
+      
+
