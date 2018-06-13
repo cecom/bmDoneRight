@@ -1,7 +1,7 @@
 ---
 maven_major: 3
-maven_version: 3.5.2
-maven_checksum: md5:948110de4aab290033c23bf4894f7d9a
+maven_version: 3.5.3
+maven_checksum: md5:51025855d5a7456fc1a67666fbef29de
 maven_home_parent_directory: /opt
 maven_file_name: apache-maven-{{ maven_version }}-bin.tar.gz
 maven_download_url: 'http://mirror.netcologne.de/apache.org/maven/maven-{{ maven_major }}/{{ maven_version }}/binaries/{{ maven_file_name }}'
