@@ -117,7 +117,7 @@
       gerrit_sha256sum: 1809c5564d698b9e32fead51cc179a1550a837b835c4b05e5f962c6fb5e3583b
       gerrit_httpd_listen_url: 'http://*:8090/'
       gerrit_canonical_web_url: 'http://localhost:8090/'
-      gerrit_container_java_home: /usr/lib/jvm/java-1.8.0-openjdk-1.8.0.161-0.b14.el7_4.x86_64/jre/
+      gerrit_container_java_home: /usr/lib/jvm/jre/
     include_role:
       role: ansible-gerrit
   
@@ -144,10 +144,10 @@
       src: http://cdist2.perforce.com/perforce/r17.3/bin.linux26x86_64/p4v.tgz
       dest: /opt/p4merge
       remote_src: yes
-      creates: /opt/p4merge/p4v-2017.3.1601999/bin/p4merge
+      creates: /opt/p4merge/p4v-2017.3.1654916/bin/p4merge
       
   - file:
-      src: /opt/p4merge/p4v-2017.3.1601999/bin/p4merge
+      src: /opt/p4merge/p4v-2017.3.1654916/bin/p4merge
       dest: /usr/local/bin/p4merge
       state: link
   
