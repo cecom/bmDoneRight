@@ -81,7 +81,7 @@ Vagrant.configure("2") do |config|
 
   config.vm.provision "shell", inline: <<-SHELL
     # install ansible if not allready installed
-    hash ansible 2>/dev/null || yum -y install http://releases.ansible.com/ansible/rpm/release/epel-7-x86_64/ansible-2.4.2.0-1.el7.ans.noarch.rpm
+    hash ansible 2>/dev/null || yum -y install http://releases.ansible.com/ansible/rpm/release/epel-7-x86_64/ansible-2.4.4.0-1.el7.ans.noarch.rpm
      
     # install the environment
     cd /vagrant/bootstrap
