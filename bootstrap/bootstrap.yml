@@ -47,6 +47,7 @@
         - gnu-free-serif-fonts
         - open-sans-fonts
         - mesa-dri-drivers
+        - tk
       state: latest
   
   #gedit 
