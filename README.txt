@@ -32,6 +32,8 @@
 == VM erneut starten
 1. Im Ordner bmDoneRight: vagrant up
 
+
+== Vagrant Befehle
 Connecten in die VM    : vagrant ssh
 
 Passwort für root      : vagrant
@@ -40,6 +42,14 @@ Anhalten der VM        : vagrant halt
 Zerstörten der VM      : vagrant destroy
 Konfiguration neu laden: vagrant reload
 Neu versorgen          : vagrant provision
+
+== Via SSH in vagrant connecten ohne vagrant ssh
+1. vagrant ssh-config > vagrant-ssh
+2. ssh -F vagrant-ssh default
+
+== Via SCP etwas rauskopieren (ohne shared lib)
+1. vagrant ssh-config > vagrant-ssh
+2. scp -F vagrant-ssh default:~/.bashrc .
 
 
 == Installierte Software

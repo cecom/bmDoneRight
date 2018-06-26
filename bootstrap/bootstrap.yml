@@ -47,6 +47,8 @@
         - open-sans-fonts
         - mesa-dri-drivers
         - tk
+        - unzip
+        - zip
       state: latest
   
   #gedit 
