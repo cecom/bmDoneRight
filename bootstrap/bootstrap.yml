@@ -1,8 +1,7 @@
 ---
 - hosts: all
   tasks:
-  
-  
+
   #Add Repo for Libs
   - name: Install EPEL Release
     become: true
@@ -94,7 +93,7 @@
     include_role: 
       name: maven
   
-  #Jenkins and Gerrit Requirements    
+  #Jenkins, Gerrit and Sonarqube Requirements    
   - name: Install Requirements for jenkins and gerrit
     command: ansible-galaxy install -r requirements.yml -f
     register: external_roles_result
@@ -132,6 +131,12 @@
         password: schulung
     include_role:
       role: ansible-role-mysql
+  
+  #Sonarqube
+  - name: Install Sonarqube
+    become: true
+    include_role:
+      role: ansible-role-sonar
   
   #P4Merge
   - name: Create P4Merge Folder

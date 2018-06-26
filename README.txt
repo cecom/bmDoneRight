@@ -13,10 +13,24 @@
      z.B. http://www.eclipse.org/downloads/download.php?file=/technology/epp/downloads/release/oxygen/2/eclipse-jee-oxygen-2-linux-gtk-x86_64.tar.gz&mirror_id=96
 10. Wenn Host Betriebsystem Windows ist, brauch man noch einen XServer. Wie z.B. XMING oder MobaXTERM, damit man Eclipse etc. starten kann. Anschließend in der VM: export DISPLAY=<ip>:0.0 ausführen
 	 
-	 
-== VM starten
+== VM das erste mal starten
 1. Im Ordner bmDoneRight: vagrant up
-2. Beim ersten mal dauert es ca. 15 Minuten. Er installiert jetzt die komplette VM mit all seinen Tools.
+2. Beim ersten mal dauert es ca. 15-30 Minuten. Er installiert jetzt die komplette VM mit all seinen Tools.
+3. Wenn es das erste mal ist:
+    - Nachdem er fertig ist, die Datei "Vagrantfile" editieren und die Zeile: 
+		config.vm.synced_folder ".", "/vagrant"
+	  suchen
+	- Das Kommentar Zeichen "#" davor machen
+	- Die nachfolgende Zeile das "#" entfernen. Es sollte dann so aussehen:
+		 #config.vm.synced_folder ".", "/vagrant"
+         config.vm.synced_folder ".", "/vagrant", type: "virtualbox"
+4. Nun folgendes eingeben: vagrant reload
+
+== VM anhalten
+1. Im Ordner bmDoneRight: vagrant halt
+
+== VM erneut starten
+1. Im Ordner bmDoneRight: vagrant up
 
 Connecten in die VM    : vagrant ssh
 
@@ -30,7 +44,7 @@ Neu versorgen          : vagrant provision
 
 == Installierte Software
 1. notepadqq
-2. gedit
+2. gedit																	
 3. eclipse
 4. ansible
 5. gerrit
@@ -44,4 +58,5 @@ Neu versorgen          : vagrant provision
 13. pacify
 14. mariadb
 15. derby
+16. sonarqube
 

@@ -28,8 +28,8 @@ Vagrant.configure("2") do |config|
   # Disable automatic box update checking. If you disable this, then
   # boxes will only be checked for updates when the user runs
   # `vagrant box outdated`. This is not recommended.
-  config.vm.box_check_update = false
-
+  config.vm.box_check_update = true
+  
   # Create a forwarded port mapping which allows access to a specific port
   # within the machine from a port on the host machine. In the example below,
   # accessing "localhost:8080" will access port 80 on the guest machine.
@@ -44,6 +44,8 @@ Vagrant.configure("2") do |config|
   config.vm.network "forwarded_port", guest: 8090, host: 8090
   #gerrit ssh
   config.vm.network "forwarded_port", guest: 29418, host: 29418
+  #sonar
+  config.vm.network "forwarded_port", guest: 9000, host: 9000
   #mariadb
   config.vm.network "forwarded_port", guest: 3306, host: 3306
 
@@ -80,6 +82,8 @@ Vagrant.configure("2") do |config|
   end
 
   config.vm.provision "shell", inline: <<-SHELL
+    yum -y update
+  
     # install ansible if not allready installed
     hash ansible 2>/dev/null || yum -y install http://releases.ansible.com/ansible/rpm/release/epel-7-x86_64/ansible-2.4.4.0-1.el7.ans.noarch.rpm
      
