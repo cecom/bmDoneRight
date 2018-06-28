@@ -49,6 +49,7 @@
         - tk
         - unzip
         - zip
+        - net-tools
       state: latest
   
   #gedit 
