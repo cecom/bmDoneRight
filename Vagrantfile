@@ -87,7 +87,7 @@ Vagrant.configure("2") do |config|
   end
 
   config.vm.provision "shell", inline: <<-SHELL
-    yum -y update
+    yum --exclude="*.i386" -y update
   
     # install ansible if not allready installed
     hash ansible 2>/dev/null || yum -y install http://releases.ansible.com/ansible/rpm/release/epel-7-x86_64/ansible-2.4.4.0-1.el7.ans.noarch.rpm
